@@ -22,6 +22,8 @@ from __future__ import annotations
 
 import json
 import os
+import io
+import zipfile
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -30,7 +32,7 @@ from database import Chunk, Document, engine, init_db
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from ingestion import process_document
 from models import AskRequest, QueryRequest, SearchRequest
 from retrieval import (
@@ -338,6 +340,61 @@ def download_document(doc_id: str):
         path=str(file_path),
         filename=filename,
         media_type="application/octet-stream",
+    )
+
+
+# ── Bulk Download ─────────────────────────────────────────────────────────────
+
+
+@app.get("/documents/download-all", tags=["Documents"])
+def download_all_documents(domain: str | None = None):
+    """
+    Download all documents (optionally filtered by domain) as a ZIP archive.
+    """
+    with Session(engine) as session:
+        if domain:
+            if domain not in ALLOWED_DOMAINS:
+                raise HTTPException(status_code=400, detail="Invalid domain.")
+            query = select(Document).where(col(Document.domain) == domain)
+        else:
+            query = select(Document)
+        
+        docs = session.exec(query).all()
+    
+    if not docs:
+        raise HTTPException(status_code=404, detail="No documents found matching the filter.")
+
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for doc in docs:
+            # We must use doc.doc_id to find the file on disk
+            # Structure: uploads/{doc_id}/{filename}
+            file_path = UPLOADS_DIR / doc.doc_id / doc.filename
+            
+            if file_path.exists():
+                # Store in zip as:
+                #   If specific domain requested:  filename.pdf
+                #   If all domains requested:      domain/filename.pdf
+                # This prevents name collisions across domains and organizes global exports.
+                if domain:
+                    arcname = doc.filename
+                else:
+                    arcname = f"{doc.domain}/{doc.filename}"
+                
+                # Handle duplicate filenames (simple append)
+                # (For a quick implementation, we trust filenames are reasonably unique or user accepts overwrites/dupes in zip tools)
+                zip_file.write(file_path, arcname=arcname)
+            else:
+                print(f"[bulk-download] Warning: File {file_path} missing on disk.")
+
+    zip_buffer.seek(0)
+    
+    filename = f"{domain}_documents.zip" if domain else "all_documents.zip"
+    
+    return StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
 

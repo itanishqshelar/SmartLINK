@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, CreditCard, HeartPulse, IdCard, FileText, Download, Trash2, Search, Loader2 } from "lucide-react";
 import DomainCard from "../components/DomainCard";
-import { api, getDownloadUrl, searchDocuments } from "../api";
+import { api, getBulkDownloadUrl, getDownloadUrl, searchDocuments } from "../api";
 import { useToast } from "../context/ToastContext";
 
 const domains = [
@@ -129,6 +129,18 @@ export default function Vault() {
                   <span className="rounded-full border border-cyan/20 bg-cyan/10 px-3 py-1 font-mono text-xs text-cyan">
                     {documents.length}
                   </span>
+                  
+                  <a
+                    href={getBulkDownloadUrl()}
+                    download="all_documents.zip"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 flex items-center gap-1.5 rounded-md border border-slate-700 bg-slate-800/50 px-3 py-1 text-[11px] text-slate-400 hover:bg-cyan/10 hover:border-cyan/30 hover:text-cyan transition-colors"
+                    title="Download entire vault as ZIP"
+                  >
+                    <Download size={14} />
+                    <span className="hidden sm:inline font-mono uppercase tracking-wide">Download All</span>
+                  </a>
                 </h2>
                 <form onSubmit={handleSearch} className="flex items-center gap-2">
                   <div className="relative">
