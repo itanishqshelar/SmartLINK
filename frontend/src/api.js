@@ -29,6 +29,12 @@ export const deleteDocument = (docId) => api.delete(`/document/${docId}`);
 export const getDownloadUrl = (docId) =>
   `${api.defaults.baseURL}/document/${docId}/download`;
 
+/** Get the bulk download URL for a domain (or all) */
+export const getBulkDownloadUrl = (domain) => {
+  if (domain) return `${api.defaults.baseURL}/documents/download-all?domain=${domain}`;
+  return `${api.defaults.baseURL}/documents/download-all`;
+};
+
 // ── AI ─────────────────────────────────────────────────────────────────────
 
 /** Get available life-transition presets */

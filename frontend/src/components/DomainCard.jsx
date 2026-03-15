@@ -10,7 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import OCRStatusBadge from "./OCRStatusBadge";
-import { getDownloadUrl } from "../api";
+import { getBulkDownloadUrl, getDownloadUrl } from "../api";
 
 // ── Domain colour map ─────────────────────────────────────────────────────────
 
@@ -177,6 +177,20 @@ export default function DomainCard({
         <div className="flex items-center gap-2">
           {icon}
           <h3 className="font-mono text-lg capitalize">{domain}</h3>
+          
+          {documents.length > 0 && (
+            <a
+              href={getBulkDownloadUrl(domain)}
+              download={`${domain}_documents.zip`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-2 flex items-center gap-1.5 rounded-md border border-slate-700 bg-slate-800/50 px-2 py-1 text-[10px] text-slate-400 hover:bg-cyan/10 hover:border-cyan/30 hover:text-cyan transition-colors"
+              title="Download all documents in this domain"
+            >
+              <Download size={11} />
+              <span className="font-mono uppercase tracking-wide">All</span>
+            </a>
+          )}
         </div>
         <OCRStatusBadge state={status} />
       </div>

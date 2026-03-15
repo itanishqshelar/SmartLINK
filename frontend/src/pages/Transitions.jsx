@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Download, FileText, X } from "lucide-react";
 import TransitionSelector from "../components/TransitionSelector";
-import SummaryCard from "../components/SummaryCard";
 import ChunkViewer from "../components/ChunkViewer";
-import { getTransitions, queryTransition, listDocuments, getDownloadUrl } from "../api";
+import SummaryCard from "../components/SummaryCard";
+import { getTransitions, queryTransition, listDocuments, getDownloadUrl, getBulkDownloadUrl } from "../api";
 import { useToast } from "../context/ToastContext";
 
 export default function Transitions() {
@@ -60,11 +60,24 @@ export default function Transitions() {
 
   return (
     <div className="space-y-5">
-      <header>
-        <h1 className="font-mono text-3xl">Life Transitions</h1>
-        <p className="text-sm text-slate-400">
-          Get a personalized summary of your documents for important life events.
-        </p>
+      <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="font-mono text-3xl">Life Transitions</h1>
+          <p className="text-sm text-slate-400">
+            Get a personalized summary of your documents for important life events.
+          </p>
+        </div>
+
+        <a 
+          href={getBulkDownloadUrl()}
+          download="all_documents.zip"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex w-fit items-center gap-2 rounded-md border border-cyan/30 bg-cyan/10 px-4 py-2 font-mono text-xs text-cyan transition hover:bg-cyan/20"
+        >
+          <Download size={15} />
+          Download All Docs
+        </a>
       </header>
 
       {transitions.length === 0 ? (
