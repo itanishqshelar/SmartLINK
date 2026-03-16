@@ -197,7 +197,7 @@ export default function Landing() {
             What's included
           </p>
           <h2 className="mt-3 font-mono text-2xl text-slate-100">
-            Everything you need. Nothing you don't.
+            Everything you need. At one place.
           </h2>
         </div>
 

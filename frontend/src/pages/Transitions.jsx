@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Download, FileText, X } from "lucide-react";
+import { Download, FileText, X, Plus } from "lucide-react";
 import TransitionSelector from "../components/TransitionSelector";
 import ChunkViewer from "../components/ChunkViewer";
 import SummaryCard from "../components/SummaryCard";
@@ -114,17 +114,43 @@ export default function Transitions() {
       {showDocsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-base/80 p-4 backdrop-blur-sm">
           <div className="w-full max-w-2xl rounded-xl border border-borderline bg-surface p-6 shadow-glow animate-slideUp">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-mono text-xl text-slate-100 flex items-center gap-2">
-                <FileText className="text-violet-400" size={20} />
-                Documents for {showDocsModal.label}
-              </h2>
-              <button
-                onClick={() => setShowDocsModal(null)}
-                className="rounded p-1 text-slate-500 transition hover:bg-white/5 hover:text-white"
-              >
-                <X size={20} />
-              </button>
+            <div className="mb-4 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h2 className="font-mono text-xl text-slate-100 flex items-center gap-2">
+                  <FileText className="text-violet-400" size={20} />
+                  Documents for {showDocsModal.label}
+                </h2>
+                <button
+                  onClick={() => setShowDocsModal(null)}
+                  className="rounded p-1 text-slate-500 transition hover:bg-white/5 hover:text-white"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={(() => {
+                    const domains = showDocsModal.domains;
+                    if (domains.length === 1) return getBulkDownloadUrl(domains[0]);
+                    return getBulkDownloadUrl();
+                  })()}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 rounded-md border border-cyan/40 bg-cyan/10 px-3 py-1.5 font-mono text-xs text-cyan transition hover:bg-cyan/20"
+                >
+                  <Download size={14} />
+                  Download All Documents
+                </a>
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 font-mono text-xs text-emerald-400 transition hover:bg-emerald-500/20"
+                >
+                  <Plus size={14} />
+                  Add
+                </button>
+              </div>
             </div>
             <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
               {(() => {

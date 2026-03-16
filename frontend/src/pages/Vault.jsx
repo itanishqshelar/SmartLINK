@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, CreditCard, HeartPulse, IdCard, FileText, Download, Trash2, Search, Loader2 } from "lucide-react";
+import { BookOpen, CreditCard, HeartPulse, IdCard, FileText, Download, Trash2, Search, Loader2, Plus } from "lucide-react";
 import DomainCard from "../components/DomainCard";
 import { api, getBulkDownloadUrl, getDownloadUrl, searchDocuments } from "../api";
 import { useToast } from "../context/ToastContext";
@@ -97,9 +97,18 @@ export default function Vault() {
 
   return (
     <div className="space-y-5">
-      <header>
-        <h1 className="font-mono text-3xl">Document Vault</h1>
-        <p className="mt-1 text-sm text-slate-400">Securely store and organize your documents by life domains.</p>
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-mono text-3xl">Document Vault</h1>
+          <p className="mt-1 text-sm text-slate-400">Securely store and organize your documents by life domains.</p>
+        </div>
+        <button
+          type="button"
+          className="flex items-center gap-1.5 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 font-mono text-xs text-emerald-400 transition hover:bg-emerald-500/20 shrink-0"
+        >
+          <Plus size={15} />
+          Add
+        </button>
       </header>
       {loadingDocs ? (
         <p className="font-mono text-sm text-slate-400 animate-pulse">Loading documents…</p>
